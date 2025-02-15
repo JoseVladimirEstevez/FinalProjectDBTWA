@@ -20,7 +20,7 @@ function ValidateEmail(email) {
 }
 
 function ValidatePassword(password) {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d]{8,}$/
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>])[a-zA-Z\d!@#$%^&*(),.?":{}|<>]{8,}$/
     return passwordRegex.test(password)
   }
 
@@ -78,7 +78,7 @@ router.post('/register', async (req, res) => {
 
     if (!ValidatePassword(body.password)) {
         res.status(400).send({
-          message: "The password must have a minimum of 8 characters and contain upper and lower case letters.",
+            message: "The password must have a minimum of 8 characters and contain upper case letters, lower case letters, and at least one symbol.",
         });
         return
     }

@@ -125,7 +125,7 @@ function Register() {
                     <div className='row g-3 justify-content-center'>
                         <div className='col-auto'>
                             <br />
-                                <label className='form-label' htmlFor="terms">Terms:</label>
+                                <label className='form-label' htmlFor="terms">Terms and Conditions:</label>
                                 <input className='m-2 form-check-input' type="checkbox" id="terms" required onChange={(event) => handleInputChange('terms', event.target.checked)}/>
                         </div>
                     </div>
