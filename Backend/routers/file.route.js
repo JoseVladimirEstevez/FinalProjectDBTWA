@@ -6,6 +6,7 @@ const { spawn } = require('child_process');
 const { client } = require('../database/database.js');
 const { cursorTo } = require('readline');
 const { ObjectId } = require('mongodb');
+const fs = require('fs');
 
 const router = express.Router();
 
@@ -20,19 +21,66 @@ router.get('/', (req, res) => {
 });
 
 router.post('/file', async (req, res) => {
-	const graphType = req.body.graphType;
-  
-	const listString = JSON.stringify(req.body.countries);
-  
-	const pythonScript = spawn('python', ['../Database/generate_graph.py', listString, graphType]);
+    try {
+        const { countries, graphType } = req.body;
+        console.log('Received request:', { countries, graphType });
 
-	const imagePath = path.join(__dirname, `../../Database/Pictures/${graphType}.png`);
-	pythonScript.stderr.on('data', (data) => {
-		console.log(`Errror $(data)`);
-	});
-	pythonScript.on('close', (code) => {
-		res.status(200).sendFile(imagePath);
-	});
+        // Get absolute paths
+        const pythonScriptPath = path.resolve(__dirname, '../../Database/generate_graph.py');
+        const workingDirectory = path.resolve(__dirname, '../../Database');
+
+        // Format countries array into a comma-separated string without brackets
+        const countriesStr = Array.isArray(countries) 
+            ? countries.map(country => country.trim()).join(',')
+            : countries;
+
+        console.log('Formatted countries string:', countriesStr);
+
+        const pythonProcess = spawn('python', [
+            pythonScriptPath,
+            countriesStr,
+            graphType
+        ], {
+            cwd: workingDirectory  // Set working directory to where the CSV file is
+        });
+
+        // Debug Python process
+        pythonProcess.stdout.on('data', (data) => {
+            console.log(`Python output: ${data}`);
+        });
+
+        pythonProcess.stderr.on('data', (data) => {
+            console.error(`Python error: ${data}`);
+        });
+
+        // Wait for Python process to complete
+        await new Promise((resolve, reject) => {
+            pythonProcess.on('close', (code) => {
+                if (code === 0) resolve();
+                else reject(new Error(`Python process exited with code ${code}`));
+            });
+        });
+
+        // Check if file exists
+        const filePath = path.join(__dirname, `../../Database/Pictures/${graphType}.png`);
+        if (!fs.existsSync(filePath)) {
+            console.error('File not found:', filePath);
+            return res.status(404).json({ 
+                error: 'Graph generation failed',
+                details: 'Image file not found'
+            });
+        }
+
+        // Send file
+        res.sendFile(filePath);
+
+    } catch (error) {
+        console.error('Error in /file route:', error);
+        res.status(500).json({ 
+            error: 'Internal server error',
+            details: error.message
+        });
+    }
 });
 
 router.post('/save', async (req, res) => {

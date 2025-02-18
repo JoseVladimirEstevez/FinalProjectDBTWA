@@ -98,12 +98,12 @@ function Graph() {
         setSecondMenuText("CO2 amount in GHG");
         setSelectedGraph("co2_from_greenhouse_emissions");
         disableFirstMenu();
-      } else if (queryParams == "c02_emmissions_worldtotal") {
+      } else if (queryParams == "co2_emmissions_worldtotal") {
         setChecked(true)
         setSecondMenuText("Per Country")
         setIsDisabled(true);
         setIsDisabled2(true);
-        setSelectedGraph("c02_emmissions_worldtotal");
+        setSelectedGraph("co2_emmissions_worldtotal");
 
       }
     }
@@ -242,7 +242,7 @@ function Graph() {
         setSelectedGraph("annual_co2_emissions");
       } else if (checked) {
         setSecondMenuText("Per country");
-        setSelectedGraph("c02_emmissions_worldtotal");
+        setSelectedGraph("co2_emmissions_worldtotal");
         disableSecondMenu();
       }
     } else if (eventKey === "Nitrous Oxide") {
@@ -287,7 +287,7 @@ function Graph() {
       setSecondMenuText("Per country");
       setIsDisabled(true);
       setIsDisabled2(true);
-      setSelectedGraph("c02_emmissions_worldtotal");
+      setSelectedGraph("co2_emmissions_worldtotal");
     } else {
       console.log("unchecked");
 
@@ -300,7 +300,10 @@ function Graph() {
 
   const handleImage = async (e) => {
     e.preventDefault();
-
+    console.log('COUNTRIES' + selectedCountries);
+    console.log('GRAHP' +selectedGraph);
+    // Add this debug line in handleImage
+console.log("Requesting URL:", serverUrl + '/file/file');
     const loginURL = serverUrl + '/file/file';
     const options = {
       method: "POST",
