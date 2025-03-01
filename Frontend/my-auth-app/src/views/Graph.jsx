@@ -390,11 +390,16 @@ console.log("Requesting URL:", serverUrl + '/file/file');
     document.body.removeChild(a);
   };
 
+  const handleLogoClick = () => {
+    navigate('/');  // Navigate to root page
+  };
+
   return (
     <div style={{ width: "100%" }}>
       <div className="container-fluid">
         <span className='align-self-center' >
-          <img src={greenLogo4} alt="Green Lab4" className='' />
+          <img src={greenLogo4} alt="Green Lab4" className=''    onClick={handleLogoClick}
+            style={{ cursor: 'pointer' }}  />
         </span>
         <h1>Graph</h1>
         <div className="row my-2">
